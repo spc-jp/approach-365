@@ -611,8 +611,8 @@
 <div id="toast" class="toast">メッセージ</div>
 
 <script>
-    /** ★サンクスメールで伝える解除用パスワードを設定してください★ */
-    const UNLOCK_PASSWORD = "GOLF365";
+    /** ★Cloudflare WorkerのURLを設定してください★ */
+    const WORKER_URL = "https://approach-365.yymmatsu.workers.dev";
 
     /** データ構造と初期設定 */
     const CLUBS = ['58°', '52°', '50°', '48°', 'PW', '9i', '8i', '7i'];
@@ -735,20 +735,48 @@
         openModal('purchaseModal');
     }
 
-    function unlockApp() {
+    // --- ロック解除（API経由に変更） ---
+    async function unlockApp() {
         const pw = document.getElementById('unlockPassword').value;
-        if (pw === UNLOCK_PASSWORD) {
-            let trialData = JSON.parse(localStorage.getItem('approach365_trial')) || {};
-            trialData.isPremium = true;
-            localStorage.setItem('approach365_trial', JSON.stringify(trialData));
-            
-            document.getElementById('trialBanner').style.display = 'none';
-            setBannerHeight();
-            
-            document.getElementById('purchaseModal').style.display = 'none';
-            showToast('ロックが解除されました。製品版をご利用いただけます！');
-        } else {
-            alert('パスワードが間違っています。サンクスメールをご確認ください。');
+        
+        if (!pw) {
+            alert('パスワードを入力してください。');
+            return;
+        }
+
+        try {
+            // Cloudflare Workerへパスワードを送信して検証する
+            const response = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: pw })
+            });
+
+            if (!response.ok) {
+                throw new Error('サーバーエラーが発生しました');
+            }
+
+            const data = await response.json();
+
+            // APIの検証結果がtrueだった場合のみロックを解除
+            if (data.success) {
+                let trialData = JSON.parse(localStorage.getItem('approach365_trial')) || {};
+                trialData.isPremium = true;
+                localStorage.setItem('approach365_trial', JSON.stringify(trialData));
+                
+                document.getElementById('trialBanner').style.display = 'none';
+                setBannerHeight();
+                
+                document.getElementById('purchaseModal').style.display = 'none';
+                showToast('ロックが解除されました。製品版をご利用いただけます！');
+            } else {
+                alert('パスワードが間違っています。サンクスメールをご確認ください。');
+            }
+        } catch (error) {
+            alert('通信エラーが発生しました。インターネット環境を確認して再度お試しください。');
+            console.error(error);
         }
     }
     // --- 終了：無料体験管理 ---
