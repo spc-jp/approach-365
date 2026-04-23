@@ -4,19 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ゴルフ丨アプローチ距離感３６５</title>
+    
+    <!-- ファビコン・アプリアイコンの設定 -->
+    <link rel="icon" href="https://spc-jp.github.io/approach-365/favicon.png">
+    <link rel="apple-touch-icon" href="https://spc-jp.github.io/approach-365/favicon.png">
+
     <style>
         :root {
             /* --- Series Design System --- */
-            --primary-color: #39C701; /* Approach365 Bright Green */
+            --primary-color: #39C701; 
             --primary-light: #EAFAE0;
             --primary-dark: #2E7D32;
             --accent-color: #FF8F00;
             
-            --text-color: #333333; /* Unified Text Color */
+            --text-color: #333333; 
             --text-sub: #666666;
-            --bg-color: #F9F9F9;   /* Unified Background */
+            --bg-color: #F9F9F9;   
             --card-bg: #FFFFFF;
-            --border-color: #DDDDDD; /* Unified Border */
+            --border-color: #DDDDDD; 
             
             --danger-color: #D32F2F;
             --info-color: #1976D2;
@@ -33,6 +38,9 @@
             /* Gradient for Right Side */
             --grad-start: #FFFFFF;
             --grad-end: #F1F8E9;
+
+            /* バナー用の高さ（JSで動的に変わります） */
+            --banner-height: 0px;
         }
 
         /* Dark Mode */
@@ -70,35 +78,53 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
+        /* --- Trial Banner --- */
+        .trial-banner {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: linear-gradient(135deg, #FFDF00, #D4AF37);
+            color: #5C4000;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none; /* 初期非表示 */
+            align-items: center;
+            justify-content: center;
+        }
+        .trial-banner.ended {
+            background: var(--danger-color);
+            color: white;
+        }
+
         /* --- Header --- */
         header {
             background-color: var(--primary-color);
             color: white;
             padding: 0 16px;
             position: sticky;
-            top: 0;
+            top: var(--banner-height); /* バナーの高さ分ずらす */
             z-index: 100;
             box-shadow: var(--shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 72px; /* 少し高さを確保 */
+            height: 72px;
             overflow: hidden;
+            transition: top 0.3s;
         }
 
-        /* Header Animation (Keep functionality) */
         .header-anim-container {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; 
-            opacity: 1; /* 透明度をなくしてくっきり表示 */
-            z-index: 0;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; 
+            opacity: 1; z-index: 0;
         }
         .anim-pin { position: absolute; bottom: 5px; left: 50%; transform: translateX(-2px); width: 4px; height: 50px; background-color: #FFF; z-index: 1; }
         .anim-flag { 
             position: absolute; top: 0; left: 0; width: 0; height: 0; 
-            border-top: 10px solid transparent; 
-            border-bottom: 10px solid transparent; 
-            border-left: 18px solid #FF0000; /* 真っ赤に変更 */
+            border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid #FF0000; 
         }
         .anim-hole { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 20px; height: 6px; background-color: rgba(0,0,0,0.3); border-radius: 50%; z-index: 0; }
         .anim-ball { position: absolute; bottom: 5px; left: -20px; width: 8px; height: 8px; background-color: white; border-radius: 50%; z-index: 2; animation: approachShot 8s infinite ease-in-out; }
@@ -125,25 +151,26 @@
 
         /* --- Swing Selector (Tabs) --- */
         .swing-selector {
-            background-color: var(--bg-color); /* Match body bg */
+            background-color: var(--bg-color); 
             padding: 12px 16px;
             display: flex;
             overflow-x: auto;
             gap: 10px;
             position: sticky;
-            top: 72px; /* ヘッダーの高さに合わせる */
+            top: calc(var(--banner-height) + 72px); /* ヘッダー分ずらす */
             z-index: 90;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            transition: top 0.3s;
         }
         .swing-selector::-webkit-scrollbar { display: none; }
 
         .swing-btn {
             background-color: var(--card-bg);
-            border: 2px solid var(--border-color); /* Matches radio buttons in 1minGolf */
+            border: 2px solid var(--border-color);
             color: var(--text-color);
             padding: 8px 16px;
-            border-radius: 8px; /* Slightly squarer radius */
+            border-radius: 8px;
             font-size: 14px;
             white-space: nowrap;
             flex-shrink: 0;
@@ -160,7 +187,7 @@
         /* --- Main Container --- */
         .container {
             padding: 0 16px 16px 16px;
-            max-width: 600px; /* Keep layout width */
+            max-width: 600px;
             margin: 0 auto;
         }
 
@@ -173,10 +200,10 @@
         }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
 
-        /* --- Card Design (Unified) --- */
+        /* --- Card Design --- */
         .card {
             background-color: var(--card-bg);
-            border: 2px solid var(--border-color); /* Thicker border like 1minGolf */
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
             margin-bottom: 16px;
             box-shadow: var(--shadow);
@@ -191,11 +218,8 @@
         }
         
         .club-name { 
-            font-size: 26px; 
-            font-weight: 900; 
-            color: var(--primary-dark); 
-            font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
-            letter-spacing: -0.5px;
+            font-size: 26px; font-weight: 900; color: var(--primary-dark); 
+            font-family: "Roboto", "Helvetica Neue", Arial, sans-serif; letter-spacing: -0.5px;
         }
         .club-note { font-size: 12px; color: var(--text-sub); font-weight: bold; }
         
@@ -254,9 +278,7 @@
             border: 2px solid var(--border-color); background-color: var(--card-bg);
             color: var(--text-color); font-size: 20px; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; user-select: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.1s;
+            cursor: pointer; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.1s;
         }
         .btn-adjust:active { background-color: var(--primary-light); border-color: var(--primary-color); transform: scale(0.95); }
 
@@ -281,7 +303,7 @@
         .footer-btn-primary { color: var(--primary-color); font-weight: bold; }
         .footer-btn-primary svg { fill: var(--primary-color); }
 
-        /* --- Buttons & Inputs (Unified Style) --- */
+        /* --- Buttons & Inputs --- */
         .btn-block {
             width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none;
@@ -295,8 +317,7 @@
 
         .form-control {
             width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;
-            font-size: 16px; background-color: var(--bg-color); color: var(--text-color);
-            font-family: inherit;
+            font-size: 16px; background-color: var(--bg-color); color: var(--text-color); font-family: inherit;
         }
 
         /* --- Modals --- */
@@ -321,17 +342,17 @@
         .modal-footer { display: flex; gap: 10px; margin-top: 24px; }
         .modal-footer > * { flex: 1; }
 
-        /* Edit Standard Table */
         .edit-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         .edit-table th { text-align: left; padding: 8px; font-size: 12px; color: var(--text-sub); border-bottom: 2px solid var(--border-color); }
         .edit-table td { padding: 12px 8px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .edit-input { width: 60px; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; text-align: right; font-size: 16px; background-color: var(--bg-color); color: var(--text-color); }
 
-        /* Help Content */
-        .help-item { display: flex; align-items: flex-start; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
-        .help-icon { font-size: 28px; margin-right: 12px; min-width: 40px; text-align: center; }
-        .help-text h4 { margin: 0 0 4px 0; font-size: 18px; color: var(--primary-color); }
-        .help-text p { margin: 0; font-size: 15px; color: var(--text-color); }
+        .tab-group { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 16px; padding-bottom: 4px; }
+        .tab-btn {
+            padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border-color);
+            background: var(--bg-color); color: var(--text-sub); white-space: nowrap; font-size: 13px; font-weight: bold;
+        }
+        .tab-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
         /* Toast */
         .toast {
@@ -341,22 +362,14 @@
             transition: opacity 0.3s; z-index: 3000; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .toast.show { opacity: 1; }
-
-        /* Settings Parts */
-        .form-group { margin-bottom: 24px; }
-        .form-label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; color: var(--text-sub); }
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
-        
-        .tab-group { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 16px; padding-bottom: 4px; }
-        .tab-btn {
-            padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border-color);
-            background: var(--bg-color); color: var(--text-sub); white-space: nowrap; font-size: 13px; font-weight: bold;
-        }
-        .tab-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
-
     </style>
 </head>
 <body>
+
+<!-- トライアルバナー -->
+<div id="trialBanner" class="trial-banner" onclick="openPurchaseModal()">
+    <!-- JSで文言挿入 -->
+</div>
 
 <!-- ヘッダー -->
 <header>
@@ -369,12 +382,13 @@
     </div>
 
     <div class="header-content">
-        <h1>ゴルフ丨アプローチ距離感３６５</h1>
-        <div class="header-sub" id="headerSub">基準: 58°くるぶし=10yd</div>
+        <h1>ゴルフ丨アプローチ３６５</h1>
+        <div class="header-sub" id="headerSub">アプローチの距離、もう迷わない。スマホで育てる自分専用ノート</div>
     </div>
     
     <div class="header-icons">
-        <button class="icon-btn" onclick="openHelp()" title="使い方">❓</button>
+        <button class="icon-btn" onclick="openCopyModal()" title="距離表をコピー">📋</button>
+        <button class="icon-btn icon-btn-sm" onclick="openHelp()" title="使い方">❓</button>
         <button class="icon-btn" onclick="openSettings()" title="設定">⚙️</button>
     </div>
 </header>
@@ -429,6 +443,7 @@
                     <li style="margin-bottom: 8px;"><b>左側に「基準」</b>、<b>右側に「練習（現在）」</b>の距離が表示されます。</li>
                     <li style="margin-bottom: 8px;">実際に打った距離に合わせて、右側の<b>「＋」「ー」ボタン</b>で数値を修正します。</li>
                     <li style="margin-bottom: 8px;">練習が終わったら、フッターの<b>「基準を更新」</b>ボタンを押してください。今日の記録が「新しい基準」として保存されます。</li>
+                    <li style="margin-bottom: 8px;">右上の<b>「📋」ボタン</b>から、完成した距離表をテキストとしてコピーできます。LINEなどの記録にお使いください。</li>
                     <li>設定（⚙️）から<b>「基準データを編集」</b>して、目標値を直接入力することも可能です。</li>
                 </ul>
             </div>
@@ -447,20 +462,20 @@
         
         <div class="form-group">
             <label class="form-label">基準データ（比較対象）の管理</label>
-            
             <button class="btn-block btn-save-record" onclick="openEditStandard()" style="background-color: var(--text-color);">
                 基準データを手動で編集
             </button>
-            <div style="font-size:12px; color:var(--text-sub); margin-bottom:16px;">
-                過去のベストや想定距離を直接入力して基準にします。
-            </div>
+            <div style="font-size:12px; color:var(--text-sub); margin-bottom:16px;">過去のベストや想定距離を直接入力して基準にします。</div>
             
-            <button class="btn-block btn-secondary" onclick="calculateStandardCheck()">
-                目安（理論値）に戻す
+            <button class="btn-block btn-secondary" onclick="calculateStandardCheck()">目安（理論値）に戻す</button>
+            <div style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">迷った時はここから初期の計算値（58°=10yd）にリセットできます。</div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">製品版ライセンス</label>
+            <button class="btn-block btn-secondary" onclick="openPurchaseModal(false)" style="color: var(--accent-color); border-color: var(--accent-color);">
+                🔑 ロック解除・購入画面へ
             </button>
-            <div style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">
-                迷った時はここから初期の計算値（58°=10yd）にリセットできます。
-            </div>
         </div>
         
         <div class="form-group">
@@ -488,27 +503,15 @@
             <button class="modal-close" onclick="closeModal(null, 'editStandardModal')">×</button>
         </div>
         <div style="font-size:12px; color:var(--text-sub); margin-bottom:16px;">
-            比較の基準となる距離を入力します。<br>
-            右側の「現在値」を参考にしてください。
+            比較の基準となる距離を入力します。<br>右側の「現在値」を参考にしてください。
         </div>
-        
-        <!-- 振り幅タブ -->
         <div class="tab-group" id="editStandardTabs"></div>
-
-        <!-- テーブル形式入力 -->
         <table class="edit-table">
             <thead>
-                <tr>
-                    <th>番手</th>
-                    <th>基準(yd)</th>
-                    <th style="text-align:right;">現在値</th>
-                </tr>
+                <tr><th>番手</th><th>基準(yd)</th><th style="text-align:right;">現在値</th></tr>
             </thead>
-            <tbody id="editStandardList">
-                <!-- JS生成 -->
-            </tbody>
+            <tbody id="editStandardList"></tbody>
         </table>
-
         <div class="modal-footer">
             <button class="btn-block btn-secondary" onclick="closeModal(null, 'editStandardModal')">キャンセル</button>
             <button class="btn-block btn-primary" onclick="saveStandardEdit()">保存</button>
@@ -546,6 +549,23 @@
     </div>
 </div>
 
+<!-- コピー用モーダル -->
+<div id="copyModal" class="modal-overlay" onclick="closeModal(event, 'copyModal')">
+    <div class="modal">
+        <div class="modal-header">
+            距離表をコピー
+            <button class="modal-close" onclick="closeModal(null, 'copyModal')">×</button>
+        </div>
+        <div style="font-size:12px; color:var(--text-sub); margin-bottom:8px;">
+            LINEやメモ帳に貼り付けて記録を残せます。
+        </div>
+        <textarea id="copyTextArea" class="form-control" style="height: 240px; font-family: monospace; white-space: pre;" readonly></textarea>
+        <button class="btn-block btn-primary" onclick="executeCopy()" style="margin-top: 16px;">
+            クリップボードにコピー
+        </button>
+    </div>
+</div>
+
 <!-- 汎用確認モーダル -->
 <div id="confirmModal" class="modal-overlay" onclick="closeModal(event, 'confirmModal')">
     <div class="modal">
@@ -561,14 +581,43 @@
     </div>
 </div>
 
+<!-- 購入・ロック解除モーダル (z-index高く設定) -->
+<div id="purchaseModal" class="modal-overlay" style="z-index: 3000;">
+    <div class="modal">
+        <div class="modal-header">
+            製品版のご案内
+            <button class="modal-close" onclick="closeModal(null, 'purchaseModal')" id="purchaseCloseBtn">×</button>
+        </div>
+        <div style="font-size:15px; color:var(--text-main); margin-bottom:20px; line-height:1.6; text-align:center;">
+            <p id="purchaseMessage">引き続き制限なくご利用いただくには製品版のご購入が必要です。</p>
+        </div>
+        
+        <!-- Stripe決済へのリンク -->
+        <a href="https://buy.stripe.com/fZu14mfTccjrdhd6wQcV20J" target="_blank" style="text-decoration:none;">
+            <button class="btn-block" style="background-color:#635BFF; color:white; margin-bottom: 24px;">
+                💳 Stripeで安全に購入する
+            </button>
+        </a>
+        
+        <div style="border-top: 1px dashed var(--border-color); padding-top: 20px;">
+            <label class="form-label" style="text-align:left;">🔑 購入済みの方（ロック解除）</label>
+            <div style="font-size:12px; color:var(--text-sub); margin-bottom:8px;">サンクスメールに記載されたパスワードを入力してください。</div>
+            <input type="text" id="unlockPassword" class="form-control" placeholder="パスワードを入力">
+            <button class="btn-block btn-secondary" onclick="unlockApp()" style="margin-top: 12px; color:var(--text-main);">ロックを解除する</button>
+        </div>
+    </div>
+</div>
+
 <div id="toast" class="toast">メッセージ</div>
 
 <script>
+    /** ★サンクスメールで伝える解除用パスワードを設定してください★ */
+    const UNLOCK_PASSWORD = "GOLF365";
+
     /** データ構造と初期設定 */
     const CLUBS = ['58°', '52°', '50°', '48°', 'PW', '9i', '8i', '7i'];
     const SWINGS = ['くるぶし', 'ひざ', '腰', '3/4', 'フル'];
     
-    // ベース距離係数
     const SWING_RATIOS = { 'くるぶし': 1, 'ひざ': 2, '腰': 3.5, '3/4': 6, 'フル': 8 };
     const CLUB_ADDITIONS = {
         '58°': 0, '52°': 5, '50°': 10, '48°': 15, 'PW': 25, '9i': 35, '8i': 45, '7i': 55
@@ -576,8 +625,8 @@
 
     const defaultState = {
         distances: {}, 
-        savedDistances: {}, // 基準（比較対象）データ
-        savedDate: null, // 基準データの保存日
+        savedDistances: {}, 
+        savedDate: null, 
         memo: "",
         memoData: { date: "", place: "練習場", text: "" },
         activeSwings: 'くるぶし',
@@ -609,13 +658,104 @@
         renderSwings();
         renderClubs();
         renderSettings();
+        
+        // 無料体験（トライアル）機能の初期化
+        initTrial();
     }
 
-    function getTodayStr() {
-        return new Date().toISOString().split('T')[0];
+    // --- 無料体験（トライアル）管理 ---
+    function initTrial() {
+        let trialData = JSON.parse(localStorage.getItem('approach365_trial')) || { count: 0, isPremium: false };
+        
+        // 購入済みの場合はバナーを非表示にして終了
+        if (trialData.isPremium) {
+            document.getElementById('trialBanner').style.display = 'none';
+            setBannerHeight();
+            return;
+        }
+
+        // セッション（タブを開いている間）ごとに1回カウントする
+        if (!sessionStorage.getItem('approach365_session_counted') && trialData.count < 4) {
+            trialData.count += 1;
+            sessionStorage.setItem('approach365_session_counted', 'true');
+            localStorage.setItem('approach365_trial', JSON.stringify(trialData));
+        }
+
+        updateTrialBanner(trialData.count);
+
+        if (trialData.count >= 4) {
+            // 4回目の起動（体験終了）でロック画面を強制表示
+            openPurchaseModal(true);
+        }
+        
+        setTimeout(setBannerHeight, 100);
     }
+
+    function updateTrialBanner(count) {
+        const banner = document.getElementById('trialBanner');
+        banner.style.display = 'flex';
+        
+        if (count === 1) { 
+           banner.innerHTML = "🎁 今なら3回まで無料でお試しいただけます（登録不要）";
+        } else if (count === 2) {
+           banner.innerHTML = "🎁 無料体験 残り2回（全3回）";
+        } else if (count === 3) {
+           banner.innerHTML = "🎁 無料体験 残り1回（全3回）";
+        } else if (count >= 4) {
+           banner.innerHTML = "⚠️ 無料体験が終了しました ご購入はこちら→";
+           banner.classList.add('ended');
+        }
+    }
+
+    function setBannerHeight() {
+        const banner = document.getElementById('trialBanner');
+        if (banner && banner.style.display !== 'none') {
+            document.documentElement.style.setProperty('--banner-height', banner.offsetHeight + 'px');
+        } else {
+            document.documentElement.style.setProperty('--banner-height', '0px');
+        }
+    }
+
+    window.addEventListener('resize', setBannerHeight);
+
+    function openPurchaseModal(isLocked = false) {
+        const btn = document.getElementById('purchaseCloseBtn');
+        const msg = document.getElementById('purchaseMessage');
+        const overlay = document.getElementById('purchaseModal');
+        
+        if (isLocked) {
+            btn.style.display = 'none';
+            msg.innerHTML = '<strong style="color:var(--danger-color); font-size:18px;">⚠️ 無料体験期間が終了しました</strong><br><br>このままご利用いただくには製品版のご購入が必要です。';
+            overlay.onclick = null; // 背景クリックで閉じないようにする
+        } else {
+            btn.style.display = 'block';
+            msg.innerHTML = '引き続き制限なくご利用いただくには製品版のご購入が必要です。';
+            overlay.onclick = function(e) { closeModal(e, 'purchaseModal'); };
+        }
+        openModal('purchaseModal');
+    }
+
+    function unlockApp() {
+        const pw = document.getElementById('unlockPassword').value;
+        if (pw === UNLOCK_PASSWORD) {
+            let trialData = JSON.parse(localStorage.getItem('approach365_trial')) || {};
+            trialData.isPremium = true;
+            localStorage.setItem('approach365_trial', JSON.stringify(trialData));
+            
+            document.getElementById('trialBanner').style.display = 'none';
+            setBannerHeight();
+            
+            document.getElementById('purchaseModal').style.display = 'none';
+            showToast('ロックが解除されました。製品版をご利用いただけます！');
+        } else {
+            alert('パスワードが間違っています。サンクスメールをご確認ください。');
+        }
+    }
+    // --- 終了：無料体験管理 ---
+
+
+    function getTodayStr() { return new Date().toISOString().split('T')[0]; }
     
-    // 日付フォーマット (YYYY-MM-DD -> M/D)
     function formatDateShort(dateStr) {
         if(!dateStr) return "";
         const d = new Date(dateStr);
@@ -625,10 +765,8 @@
 
     function updateHeaderInfo() {
         const sub = document.getElementById('headerSub');
-        let text = "基準: 58°くるぶし=10yd";
-        if (appState.savedDate) {
-            text += ` (${formatDateShort(appState.savedDate)}更新)`;
-        }
+        let text = "アプローチの距離、もう迷わない。スマホで育てる自分専用ノート";
+        // キャッチコピーを常に表示するように変更しました
         sub.textContent = text;
     }
 
@@ -692,8 +830,6 @@
             const savedData = appState.savedDistances[club] && appState.savedDistances[club][swing];
             
             const baseVal = savedData ? savedData.val : currentData.val;
-            
-            // 差分計算
             const diff = currentData.val - baseVal;
             let diffClass = 'diff-zero';
             let diffText = '±0';
@@ -711,7 +847,6 @@
                 </div>
                 
                 <div class="split-view">
-                    <!-- 左: 基準 (固定/比較対象) -->
                     <div class="split-left">
                         <span class="label-sm">基準</span>
                         <div class="value-unified">${baseVal}<span class="unit">yd</span></div>
@@ -720,7 +855,6 @@
                     
                     <div class="split-divider"></div>
                     
-                    <!-- 右: 練習 (現在/操作対象) -->
                     <div class="split-right">
                         <span class="label-sm">練習</span>
                         <div class="value-unified">${currentData.val}<span class="unit">yd</span></div>
@@ -749,7 +883,7 @@
     function updateStandardFromCurrent() {
         showConfirm('基準を更新しますか？', '現在の「練習（右側）」の数値を、新しい「基準（左側）」として保存します。<br>次回の練習は、この数値がスタート地点になります。', function() {
             appState.savedDistances = JSON.parse(JSON.stringify(appState.distances));
-            appState.savedDate = getTodayStr(); // 更新日を保存
+            appState.savedDate = getTodayStr();
             save();
             renderClubs();
             updateHeaderInfo();
@@ -815,7 +949,7 @@
     }
     
     function saveStandardEdit() {
-        appState.savedDate = getTodayStr(); // 手動編集でも日付更新
+        appState.savedDate = getTodayStr();
         save();
         renderClubs();
         updateHeaderInfo();
@@ -917,6 +1051,52 @@
             localStorage.removeItem('approach365_data');
             location.reload();
         });
+    }
+
+    function openCopyModal() {
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+        
+        let text = `⛳ マイ距離感表 (${dateStr})\n`;
+        text += `--------------------------------\n`;
+        text += `     [くる/ひざ/ 腰 / 3/4 /フル]\n`;
+        
+        const visibleClubs = appState.settings.visibleClubs;
+        visibleClubs.forEach(club => {
+            let clubName = club;
+            if(clubName.length === 2) clubName += " ";
+            if(clubName.length === 1) clubName += "  ";
+            
+            let row = `${clubName}: `;
+            let vals = [];
+            SWINGS.forEach(swing => {
+                const val = appState.distances[club][swing] ? appState.distances[club][swing].val : '-';
+                vals.push(String(val).padStart(3, ' '));
+            });
+            row += vals.join(' / ');
+            text += row + "\n";
+        });
+        
+        if (appState.memoData && appState.memoData.text) {
+            text += `\n[メモ]\n${appState.memoData.text}\n`;
+        }
+
+        document.getElementById('copyTextArea').value = text;
+        openModal('copyModal');
+    }
+
+    function executeCopy() {
+        const textArea = document.getElementById('copyTextArea');
+        textArea.select();
+        textArea.setSelectionRange(0, 99999);
+        
+        try {
+            document.execCommand('copy');
+            showToast('コピーしました！LINE等に貼り付けられます。');
+            setTimeout(() => { closeModal(null, 'copyModal'); }, 500);
+        } catch (err) {
+            showToast('コピーに失敗しました。テキストを手動でコピーしてください。');
+        }
     }
 
     init();
